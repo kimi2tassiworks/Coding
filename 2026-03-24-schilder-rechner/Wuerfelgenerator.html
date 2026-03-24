@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folien-Schilder-Rechner mit Mehrfach-Produkten</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            opacity: 0.8;
+            font-size: 0.95em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .product-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .product-section h3 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #4a90d9;
+            padding-bottom: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        select, input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #4a90d9;
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #4a90d9 0%, #357abd 100%);
+            color: #fff;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 217, 0.3);
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+        }
+
+        .btn-remove:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: #fff;
+        }
+
+        .btn-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(149, 165, 166, 0.3);
+        }
+
+        .price-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            color: #fff;
+        }
+
+        .price-section h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.4em;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .price-row.total {
+            background: rgba(255, 255, 255, 0.2);
+            border-top: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 15px;
+            padding: 15px;
+        }
+
+        .products-list {
+            margin-top: 30px;
+        }
+
+        .products-list h3 {
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4a90d9;
+        }
+
+        .product-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product-detail {
+            font-size: 0.9em;
+        }
+
+        .product-detail strong {
+            color: #333;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #4a90d9;
+        }
+
+        .product-price .netto {
+            color: #27ae60;
+        }
+
+        .product-price .mwst {
+            color: #e74c3c;
+        }
+
+        .product-price .brutto {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Folien-Schilder-Rechner</h1>
+            <div class="subtitle">Mehrfach-Produkte mit Gesamtberechnung</div>
+        </header>
+
+        <div class="content">
+            <!-- Product Input Section -->
+            <div class="product-section">
+                <h3>Produkt hinzufügen</h3>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="einzelschild">
+                    <label for="einzelschild" style="margin: 0;">Einzelschildzuschlag (+15%)</label>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Breite / Länge (cm)</label>
+                        <input type="number" id="breite" min="0" step="0.1" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Höhe (cm)</label>
+                        <input type="number" id="hoehe" min="0" step="0.1" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Stückzahl</label>
+                        <input type="number" id="stueckzahl" min="1" value="1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fläche (m²)</label>
+                        <input type="number" id="flaeche" min="0" step="0.01" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Flächen-Faktor</label>
+                        <select id="flaechenfaktor">
+                            <option value="10">unter 0,1</option>
+                            <option value="9">unter 0,2</option>
+                            <option value="8">unter 0,5</option>
+                            <option value="7">unter 0,75</option>
+                            <option value="6">unter 1,0</option>
+                            <option value="5">unter 1,5</option>
+                            <option value="4">unter 2,0</option>
+                            <option value="3">unter 3,0</option>
+                            <option value="2">unter 4,0</option>
+                            <option value="1">unter 5,0</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Plottfolien</label>
+                        <select id="plottfolie">
+                            <option value="0">Keine</option>
+                            <option value="25">Plottfolie geplottet</option>
+                            <option value="35">Plottfolie geplottet aufwändig / zweifärbig</option>
+                            <option value="20">Plottfolie Zuschnitt</option>
+                            <option value="20">Glasdekor Zuschnitt</option>
+                            <option value="25">Schablonenfolie</option>
+                            <option value="30">Glasdekor geplottet</option>
+                            <option value="35">Plottfolie 3D Zuschnitt</option>
+                            <option value="45">Plottfolie Chrome (3M)</option>
+                            <option value="40">Plottfolie reflektierend Type 1</option>
+                            <option value="45">Plottfolie reflektierend Type 2 (3M)</option>
+                            <option value="50">Plottfolie Chrome bedruckbar</option>
+                            <option value="35">Tönungsfolie</option>
+                            <option value="40">Sonnenschutzfolie silber</option>
+                            <option value="45">Sonnenschutzfolie verklebt</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Druckfolien</label>
+                        <select id="druckfolie">
+                            <option value="0">Keine</option>
+                            <option value="30">Etikettenfolie</option>
+                            <option value="35">Druckfolie lang</option>
+                            <option value="40">Druckfolie 3D</option>
+                            <option value="45">Glasdekor bedruckt</option>
+                            <option value="25">Plane ohne Ösen</option>
+                            <option value="30">Plane mit Ösen</option>
+                            <option value="35">Plane Überformat</option>
+                            <option value="40">Posterpapier</option>
+                            <option value="50">Leinwand</option>
+                            <option value="60">Leinwand mit Rahmen</option>
+                            <option value="55">Leuchtkastenfolie</option>
+                            <option value="45">Lochfolie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Laminate</label>
+                        <select id="laminat">
+                            <option value="0">Keine</option>
+                            <option value="15">Laminat lang glänzend</option>
+                            <option value="15">Laminat lang matt</option>
+                            <option value="20">Laminat 3D glänzend</option>
+                            <option value="15">Laminat Lochfolie</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Untergrundmaterial</label>
+                        <select id="untergrund">
+                            <option value="0">Keine</option>
+                            <option value="25">Verbundplatte 2mm</option>
+                            <option value="30">Verbundplatte 3mm</option>
+                            <option value="35">Verbundplatte 4mm</option>
+                            <option value="40">Verbundplatte färbig</option>
+                            <option value="35">Acryl 3mm</option>
+                            <option value="40">Acryl 4mm</option>
+                            <option value="45">Acryl 5mm</option>
+                            <option value="50">Acryl 6mm</option>
+                            <option value="55">Acryl 8mm</option>
+                            <option value="60">Acryl 10mm</option>
+                            <option value="30">Hart-PVC 2mm</option>
+                            <option value="35">geschäumtes PVC 3mm</option>
+                            <option value="40">geschäumtes PVC 4mm</option>
+                            <option value="45">geschäumtes PVC 5mm</option>
+                            <option value="50">geschäumtes PVC 6mm</option>
+                            <option value="40">Aluminium roh 2mm</option>
+                            <option value="45">Aluminium lackiert 2mm</option>
+                            <option value="35">Magnetfolie</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-add" id="btnAddProdukt">Produkt hinzufügen</button>
+                    <button class="btn btn-clear" id="btnClear">Alle löschen</button>
+                </div>
+
+                <div class="btn-group" style="margin-top: 15px;">
+                    <button class="btn btn-add" id="btnRechnung">Drucken / Speichern</button>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            <div class="products-list">
+                <h3>Produkte ({<span id="produktCount">0</span>})</h3>
+                <div id="produkteListe"></div>
+            </div>
+
+            <!-- Price Calculation -->
+            <div class="price-section">
+                <h3>📊 Preisberechnung</h3>
+                
+                <div class="price-row">
+                    <span>Produkte insgesamt:</span>
+                    <span id="gesamtProdukte">0</span>
+                </div>
+                <div class="price-row">
+                    <span>Fläche insgesamt (m²):</span>
+                    <span id="gesamtFlaeche">0.00</span>
+                </div>
+                <div class="price-row">
+                    <span>Netto-Gesamtpreis:</span>
+                    <span class="netto" id="gesamtNetto">€ 0,00</span>
+                </div>
+                <div class="price-row">
+                    <span>Mehrwertsteuer (20%):</span>
+                    <span class="mwst" id="gesamtMwst">€ 0,00</span>
+                </div>
+                <div class="price-row total">
+                    <span>Brutto-Gesamtpreis:</span>
+                    <span class="brutto" id="gesamtBrutto">€ 0,00</span>
+                </div>
+
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn btn-add" id="btnRechnung">Drucken / Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let produkte = [];
+
+        // Elemente
+        const btnAdd = document.getElementById('btnAddProdukt');
+        const btnClear = document.getElementById('btnClear');
+        const btnRechnung = document.getElementById('btnRechnung');
+        const produkteListe = document.getElementById('produkteListe');
+        const produkteCount = document.getElementById('produktCount');
+
+        // Berechnungsfunktion
+        function berechnePreis(einzelschild, flaeche, flaechenfaktor, plottfolie, druckfolie, laminat, untergrund, stueckzahl) {
+            let basisPreis = 0;
+            
+            // Plottfolie
+            basisPreis += plottfolie;
+            
+            // Druckfolie
+            basisPreis += druckfolie;
+            
+            // Laminat
+            basisPreis += laminat;
+            
+            // Untergrund
+            basisPreis += untergrund;
+            
+            // Flächen-Faktor anwenden
+            basisPreis *= flaeche * flaechenfaktor;
+            
+            // Einzelschildzuschlag
+            if (einzelschild) {
+                basisPreis *= 1.15;
+            }
+            
+            // Multiplizieren mit Stückzahl
+            const einzelpreis = basisPreis;
+            const Gesamtpreis = einzelpreis * stueckzahl;
+            
+            return {
+                einzelpreis: einzelpreis,
+                gesamtpreis: Gesamtpreis,
+                mwst: Gesamtpreis * 0.20,
+                brutto: Gesamtpreis * 1.20
+            };
+        }
+
+        function formatierePreis(preis) {
+            return new Intl.NumberFormat('de-AT', { style: 'currency', currency: 'EUR' }).format(preis);
+        }
+
+        function renderProdukte() {
+            produkteListe.innerHTML = '';
+            let GesamtAnzahl = 0;
+            let GesamtFlaeche = 0;
+            let GesamtNetto = 0;
+
+            produkte.forEach((produkt, index) => {
+                const { einzelpreis, gesamtpreis, mwst, brutto } = berechnePreis(
+                    produkt.einzelschild,
+                    produkt.flaeche,
+                    produkt.flaechenfaktor,
+                    produkt.plottfolie,
+                    produkt.druckfolie,
+                    produkt.laminat,
+                    produkt.untergrund,
+                    produkt.stueckzahl
+                );
+
+                GesamtAnzahl += produkt.stueckzahl;
+                GesamtFlaeche += produkt.flaeche * produkt.stueckzahl;
+                GesamtNetto += gesamtpreis;
+
+                const html = `
+                    <div class="product-item">
+                        <div class="product-details">
+                            <div class="product-detail"><strong>Fläche:</strong> ${produkt.flaeche} m²</div>
+                            <div class="product-detail"><strong>Faktor:</strong> ${produkt.flaechenfaktor}</div>
+                            <div class="product-detail"><strong>Stückzahl:</strong> ${produkt.stueckzahl}</div>
+                            <div class="product-detail"><strong>Einzelschild:</strong> ${produkt.einzelschild ? 'Ja' : 'Nein'}</div>
+                        </div>
+                        <div class="product-details">
+                            <div class="product-detail"><strong>Plottfolie:</strong> ${produkt.plottfolie > 0 ? getBezeichnung(produkt.plottfolie, plottfolien) : 'Keine'}</div>
+                            <div class="product-detail"><strong>Druckfolie:</strong> ${produkt.druckfolie > 0 ? getBezeichnung(produkt.druckfolie, druckfolien) : 'Keine'}</div>
+                            <div class="product-detail"><strong>Laminat:</strong> ${produkt.laminat > 0 ? getBezeichnung(produkt.laminat, laminate) : 'Keine'}</div>
+                            <div class="product-detail"><strong>Untergrund:</strong> ${produkt.untergrund > 0 ? getBezeichnung(produkt.untergrund, untergrundMaterial) : 'Keine'}</div>
+                        </div>
+                        <div class="product-price">
+                            <span class="netto">Netto: ${formatierePreis(gesamtpreis)}</span> |
+                            <span class="mwst">Mwst: ${formatierePreis(mwst)}</span> |
+                            <span class="brutto">Brutto: ${formatierePreis(brutto)}</span>
+                            <button class="btn btn-remove" style="padding: 5px 10px; font-size: 0.8em; margin-left: 10px; float: right;" onclick="entferneProdukt(${index})">Entfernen</button>
+                        </div>
+                    </div>
+                `;
+                produkteListe.innerHTML += html;
+            });
+
+            const mwstGesamt = GesamtNetto * 0.20;
+            const bruttoGesamt = GesamtNetto * 1.20;
+
+            document.getElementById('gesamtProdukte').textContent = GesamtAnzahl;
+            document.getElementById('gesamtFlaeche').textContent = GesamtFlaeche.toFixed(2);
+            document.getElementById('gesamtNetto').textContent = formatierePreis(GesamtNetto);
+            document.getElementById('gesamtMwst').textContent = formatierePreis(mwstGesamt);
+            document.getElementById('gesamtBrutto').textContent = formatierePreis(bruttoGesamt);
+
+            produkteCount.textContent = produkte.length;
+        }
+
+        function getBezeichnung(wert, liste) {
+            const option = liste.querySelector(`option[value="${wert}"]`);
+            return option ? option.text : wert;
+        }
+
+        function entferneProdukt(index) {
+            produkte.splice(index, 1);
+            renderProdukte();
+        }
+
+        // Daten-Listen
+        const plottfolien = document.getElementById('plottfolie');
+        const druckfolien = document.getElementById('druckfolie');
+        const laminate = document.getElementById('laminat');
+        const untergrundMaterial = document.getElementById('untergrund');
+
+        btnAdd.addEventListener('click', () => {
+            const produkt = {
+                einzelschild: document.getElementById('einzelschild').checked,
+                flaeche: parseFloat(document.getElementById('flaeche').value) || 1,
+                flaechenfaktor: parseInt(document.getElementById('flaechenfaktor').value) || 10,
+                plottfolie: parseInt(document.getElementById('plottfolie').value) || 0,
+                druckfolie: parseInt(document.getElementById('druckfolie').value) || 0,
+                laminat: parseInt(document.getElementById('laminat').value) || 0,
+                untergrund: parseInt(document.getElementById('untergrund').value) || 0,
+                stueckzahl: parseInt(document.getElementById('stueckzahl').value) || 1
+            };
+
+            produkte.push(produkt);
+            renderProdukte();
+
+            // Reset some fields
+            document.getElementById('einzelschild').checked = false;
+        });
+
+        btnClear.addEventListener('click', () => {
+            produkte = [];
+            renderProdukte();
+        });
+
+        btnRechnung.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Init
+        renderProdukte();
+    </script>
+</body>
+</html>
