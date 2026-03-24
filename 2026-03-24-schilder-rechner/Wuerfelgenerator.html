@@ -431,39 +431,43 @@
         const produkteListe = document.getElementById('produkteListe');
         const produkteCount = document.getElementById('produktCount');
 
+        // Preismatrix - Kosten pro m² nach Staffelung (je kleiner der Faktor, desto höher der Preis pro m²)
+        // Staffelung: 10=unter 0,1m², 9=unter 0,2m², 8=unter 0,5m², etc.
+        const preisMatrix = {
+            10: 25.00,  // unter 0,1 m²
+            9: 20.00,   // unter 0,2 m²
+            8: 15.00,   // unter 0,5 m²
+            7: 12.00,   // unter 0,75 m²
+            6: 10.00,   // unter 1,0 m²
+            5: 8.00,    // unter 1,5 m²
+            4: 6.50,    // unter 2,0 m²
+            3: 5.00,    // unter 3,0 m²
+            2: 4.00,    // unter 4,0 m²
+            1: 3.00     // unter 5,0 m²
+        };
+
         // Berechnungsfunktion
         function berechnePreis(einzelschild, flaeche, flaechenfaktor, plottfolie, druckfolie, laminat, untergrund, stueckzahl) {
-            let basisPreis = 0;
+            // Basis-Preis pro m² aus Preismatrix
+            const preisProMeterQuadrat = preisMatrix[flaechenfaktor] || 20.00;
             
-            // Plottfolie
-            basisPreis += plottfolie;
+            // Materialkosten (fix pro Stück)
+            let materialKosten = plottfolie + druckfolie + laminat + untergrund;
             
-            // Druckfolie
-            basisPreis += druckfolie;
-            
-            // Laminat
-            basisPreis += laminat;
-            
-            // Untergrund
-            basisPreis += untergrund;
-            
-            // Flächen-Faktor anwenden
-            basisPreis *= flaeche * flaechenfaktor;
-            
-            // Einzelschildzuschlag
+            // Einzelschildzuschlag (15% auf Materialkosten)
             if (einzelschild) {
-                basisPreis *= 1.15;
+                materialKosten *= 1.15;
             }
             
-            // Multiplizieren mit Stückzahl
-            const einzelpreis = basisPreis;
-            const Gesamtpreis = einzelpreis * stueckzahl;
+            // Gesamtpreis = (Preis pro m² * Fläche) + Materialkosten
+            const einzelpreis = (preisProMeterQuadrat * flaeche) + materialKosten;
+            const gesamtpreis = einzelpreis * stueckzahl;
             
             return {
                 einzelpreis: einzelpreis,
-                gesamtpreis: Gesamtpreis,
-                mwst: Gesamtpreis * 0.20,
-                brutto: Gesamtpreis * 1.20
+                gesamtpreis: gesamtpreis,
+                mwst: gesamtpreis * 0.20,
+                brutto: gesamtpreis * 1.20
             };
         }
 
