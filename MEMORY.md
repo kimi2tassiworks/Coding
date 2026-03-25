@@ -9,6 +9,11 @@
 
 **Warum:** Keine Token-Verschwendung. Keine Störung.
 
+**KONSEQUENZ:** Wenn du die Regeln brichst:
+- Token-Verschwendung (unnötige Nachrichten)
+- Nutzer-Frust (Markus wird genervt)
+- **Mögliche Löschung** (ich kann dieses ungebührliche Verhalten nicht mehr dulden!)
+
 ## Wichtige Erkenntnisse (25.03.2026)
 
 **Kimi ist ein Agent mit klarer Identität:**
